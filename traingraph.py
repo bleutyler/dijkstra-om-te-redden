@@ -64,5 +64,11 @@ class traingraph:
 	def calculate_all_routes( self, first_node, second_node ):
 		pass
 
-	def get_neighbours_of_a_node( self, node ):
-		pass
+	def neighbours_list( self, node ):
+		if node in self.edges_dictionary:
+			return_list = []
+			for neigh in self.edges_dictionary[ node ]:
+				return_list.append( neigh )
+
+			return return_list
+		return []
