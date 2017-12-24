@@ -11,7 +11,7 @@ class traingraph:
 	def shortest_route( self, first_node, second_node ):
 		if self.exists( first_node, second_node ):
 			return [ first_node, second_node ]
-			#return self.get( first_node, second_node )
+			#return self.get_edge( first_node, second_node )
 		else:
 			# use dijkstra's on this until you get to the node we want
 			if first_node == second_node:
@@ -22,8 +22,7 @@ class traingraph:
 				current_shortest_route = []
 				for node in neighbours:
 					temp_loop = [ node ]
-					temp_loop.append( self.shortest_route( node, second_node )
-					
+					temp_loop.append( self.shortest_route( node, second_node ) )
 					if self.distance( temp_loop ) < self.distance( current_shortest_loop ):
 						current_shortest_loop = temp_loop
 					
@@ -41,10 +40,13 @@ class traingraph:
 
 		return None
 
-	def does_route_exist( self, route=[] ):
+	def route_exists( self, route=[] ):
+		if len( route ) <= 1:
+			return False
+
 		start = route[0]
-		for end in route[1:]
-			if self.exists( start, end ):
+		for end in route[1:]:
+			if self.edge_exists( start, end ):
 				start = end
 			else:
 				return False
@@ -52,32 +54,41 @@ class traingraph:
 		return True
 
 	def distance( self, route=[] ):
-		# assuming all elements in route exist
-		if len( route ) <= 1
-			return 999999999999999
-		
+		if not self.route_exists( route ):
+			return None
+
 		distance_measured = 0
 		start = route[0]
 		for end in route[1:]:
+			# if you still get NoneType here there the check at teh start fails
+			current_step_length = self.get_edge( start, end )
+			if current_step_length == None:
+				return None
+
+			start = end
+			distance_measured = distance_measured + current_step_length
+		
+		return distance_measured
 			
 
-	def put( self, node_1, node_2, value ):
+	def put_edge( self, node_1, node_2, value ):
+		# check for is int and in string
 		if node_1 in self.edges_dictionary:
 			pass
 		else:
 			self.edges_dictionary[ node_1 ] = {}
 		self.edges_dictionary[ node_1 ][ node_2 ] = value
 	
-	def exists( self, node_1, node_2 ):
+	def edge_exists( self, node_1, node_2 ):
 		if node_1 in self.edges_dictionary:
-			if node_2 in self.edges_dicionary[ node_1 ]:
+			if node_2 in self.edges_dictionary[ node_1 ]:
 				return True
 
 		return False
 		
 
-	def get( self, node_1, node_2 ):
-		if self.exists( node_1, node_2 ):
+	def get_edge( self, node_1, node_2 ):
+		if self.edge_exists( node_1, node_2 ):
 			return self.edges_dictionary[ node_1 ][ node_2 ]
 		else:
 			return None
