@@ -21,10 +21,20 @@ class traingraph:
 				
 				current_shortest_route = []
 				for node in neighbours:
-					temp_loop = [ node ]
-					temp_loop.append( self.shortest_route( node, second_node ) )
-					if self.distance( temp_loop ) < self.distance( current_shortest_loop ):
-						current_shortest_loop = temp_loop
+					temp_route = [ node ]
+					# here we need to subtract a node 
+					# temp_route.append( self.shortest_route( node, second_node ) )
+
+					if self.route_exists( temp_route ):
+						if len( current_shortest_route ) == 0: 
+							current_shortest_route = temp_route
+						else:
+							if self.distance( temp_route ) < self.distance( current_shortest_route ):
+								current_shortest_route = temp_route
+								  
+					else:
+						pass
+
 					
 				# subLoop = calculate_shortest_route( neighbour, second_node )
 				# return the shortest routes from [first_node][neighbour] + subLoop
@@ -93,9 +103,18 @@ class traingraph:
 		else:
 			return None
 
-	def return_sub_graph_with_node_removed( self, node_to_delete ):
-		# iterate through unique edges
-		pass
+	def graph_with_node_removed( self, node ):
+		dict = self.edges_dictionary.copy()
+		if node in dict:
+			del dict[ node ]
+		
+		for other_node in self.edges_dictionary.keys():
+			if self.edge_exists( other_node, node ):
+				del dict[ other_node ][ node ]
+		return dict
+
+	def graph( self ):
+		return self.edges_dictionary.copy()
 
 	def return_list_of_unique_nodes( self ):
 		pass
