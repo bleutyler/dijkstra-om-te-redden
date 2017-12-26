@@ -157,7 +157,45 @@ class traingraph:
 
 		
 	def calculate_all_routes( self, first_node, second_node ):
-		pass
+		list_of_routes = []
+		#current_route  = []
+		print( 'all_routes(): ENTER' )
+		if self.edge_exists( first_node, second_node ):
+			print( 'all_routes(): exists direct ' + first_node + ' -> ' + second_node )
+			list_of_routes.append( [ first_node, second_node ] )
+
+		# use dijkstra's on this until you get them all 
+
+		neighbours = self.neighbours_going_out_list( first_node )
+		if neighbours == []:
+			# there are no edges leaving the first_node, so we are done here
+			return None
+		else:
+			for node in neighbours:
+				print( 'all_routes(): exploring neighbour ' + node + ' in chain ' + first_node + ' -> ' + node + ' -> ... -> '  + second_node )
+				temp_route = [ node ]
+				temp_edges_map = self.graph_with_node_removed( first_node )
+				print( 'all_routes():      looking in tree: ' + str( temp_edges_map.get_copy_of_edges() ) )
+
+				routes_from_neighbour = temp_edges_map.calculate_all_routes( node, second_node )
+				if routes_from_neighbour == None:
+					print( 'all_routes(): no routes from neighbour : ' + node + ' to end_node: ' + second_node )
+					next
+				else:
+					for neighbour_route in routes_from_neighbour:	
+						if not neighbour_route == None:
+							temp_route = [ first_node ]
+							temp_route.extend( neighbour_route )
+							list_of_routes.append( temp_route )
+							print( 'all_routes(): found and added: ' + str( temp_route ) )
+
+		if len( list_of_routes ) == 0:
+			print( 'all_routes(): END - There is no route from ' + first_node + ' to ' + second_node + ' in the tree: ' + str( self.get_copy_of_edges() )  )
+			return None
+
+		print( 'all_routes(): END - I am returning: ' + str( list_of_routes ) )
+		return list_of_routes 
+
 
 	def neighbours_going_out_list( self, node ):
 		if node in self.edges_dictionary:
