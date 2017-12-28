@@ -142,11 +142,11 @@ class traingraph:
 			# there are no edges leaving the first_node, so we are done here
 			return None
 		else:
-			logging.debug( 'all_routes(): looking for paths from ' + node + ' to ' + second_node )
+			logging.debug( 'all_routes(): looking for paths from neighbours of ' + first_node + ' to ' + second_node )
 			for node in neighbours:
 				if node == second_node:
 					logging.debug( 'all_routes(): Do not go into sub trees now!' )
-					next
+					continue
 				temp_route = [ node ]
 				# This should remove the node iff first_node != second_node
 				temp_edges_map = {}
