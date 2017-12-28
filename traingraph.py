@@ -3,10 +3,11 @@ __author__ = "Tyler Slijboom"
 __copyright__ = "Copyright 2017, PI Solutions"
 __credits__ = ["BMO Bank"]
 __license__ = "GPL"
-__version__ = "0.2"
+__version__ = "0.2.1"
 __email__ = "tyler.slijboom@gmail.com"
 __status__ = "Development"
-# 0.2 - Added testing with unittest
+# 0.2 		- Added testing with unittest
+# 0.2.1 	- expanded tests, strengthened method
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 
@@ -44,7 +45,7 @@ class traingraph:
 				current_shortest_route = current_route
 			else:
 				if self.distance( current_route ) < self.distance( current_shortest_route ):
-					current_shortest_route = current_route
+					current_shortest_route = current_route 
 				else:
 					next
 						  
@@ -67,7 +68,7 @@ class traingraph:
 
 	def distance( self, route=[] ):
 		if not self.route_exists( route ):
-			return None
+			return 0
 
 		distance_measured = 0
 		start = route[0]
@@ -75,7 +76,7 @@ class traingraph:
 			# if you still get NoneType here there the check at teh start fails
 			current_step_length = self.get_edge( start, end )
 			if current_step_length == None:
-				return None
+				return 0
 
 			start = end
 			distance_measured = distance_measured + current_step_length
@@ -86,6 +87,8 @@ class traingraph:
 
 	def put_edge( self, node_1, node_2, value ):
 		# check for is int and in string
+		if not isinstance( node_1, str ) or not isinstance( node_2, str ) or not isinstance( value, int ):
+			return
 		if node_1 in self.edges_dictionary:
 			pass
 		else:
