@@ -54,9 +54,38 @@ class TestTrainGraph( unittest.TestCase ):
 		self.assertIsNone( tg_simple.get_edge( 'not', 'exist' ), 'get_edge() works on bad input' )
 
 	def test_route_methods( self ):
-		pass
-		#def shortest_route( self, first_node, second_node ):
-		#def route_exists( self, route=[] ):
+		
+		short = traingraph.traingraph( self.short_dict) 
+		expected_list = []
+		self.assertEqual( short.shortest_route( 'A', 'D' ), expected_list, ' shortest_route() works - test 1 of 3' )
+		
+		med = traingraph.traingraph( self.med_dict ) 
+		expected_list = []
+		self.assertEqual( med.shortest_route( 'A', 'F' ), expected_list, ' shortest_route() works - test 2 of 3' )
+		
+		large = traingraph.traingraph( self.large_dict ) 
+		expected_list = []
+		self.assertEqual( large.shortest_route( 'A', 'L' ), expected_list, ' shortest_route() works - test 3 of 3' )
+
+		expected_list = [ 'A', 'A' ]
+		self.assertEqual( large.shortest_route( 'A', 'A' ), expected_list, ' shortest_route() works on a loop, from A to A' )
+		
+		self.assertTrue( short.route_exists( [ 'A', 'A' ] ) )
+		self.assertFalse( short.route_exists( [ 'A', 'Z' ] ) )
+
+		#####
+		# input errors
+		#####
+
+		expected_list = [ ]
+		self.assertEqual( large.shortest_route( 'A', 'Z' ), expected_list, ' shortest_route() works on nodes that do no exist - test 1 of 3' )
+
+		expected_list = [ ]
+		self.assertEqual( large.shortest_route( 'X', 'A' ), expected_list, ' shortest_route() works on nodes that do no exist - test 2 of 3' )
+
+		expected_list = [ ]
+		self.assertEqual( large.shortest_route( 'X', 'Z' ), expected_list, ' shortest_route() works on nodes that do no exist - test 3 of 3' )
+
 		#def calculate_all_routes( self, first_node, second_node ):
 
 	def test_graph_methods( self ):
