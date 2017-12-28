@@ -110,7 +110,7 @@ class traingraph:
 			return None
 
 	def graph_with_node_removed( self, node ):
-		dict = self.get_copy_of_edges()
+		dict = self.graph()
 		if node in dict:
 			del dict[ node ]
 		
@@ -128,15 +128,6 @@ class traingraph:
 	#def calculate_number_of_stops_between( self, first_node, second_node ):
 	#	pass
 
-	def get_copy_of_edges( self ):
-		dict = {}
-		for key_1 in self.edges_dictionary.keys():
-			dict[ key_1 ] = {}
-			for key_2 in self.edges_dictionary[ key_1 ]:
-				dict[ key_1 ][ key_2 ] = self.get_edge( key_1 , key_2 )
-		return dict
-
-		
 	def calculate_all_routes( self, first_node, second_node ):
 		list_of_routes = []
 		logging.debug( 'all_routes(): ENTER' )
@@ -161,10 +152,10 @@ class traingraph:
 				# This should remove the node iff first_node != second_node
 				temp_edges_map = {}
 				if first_node == second_node:
-					temp_edges_map = traingraph( self.get_copy_of_edges() )
+					temp_edges_map = traingraph( self.graph() )
 				else:
 					temp_edges_map = self.graph_with_node_removed( first_node )
-				logging.debug( 'all_routes(): looking for path from ' + node + ' to ' + second_node + ' in tree: ' + str( temp_edges_map.get_copy_of_edges() ) )
+				logging.debug( 'all_routes(): looking for path from ' + node + ' to ' + second_node + ' in tree: ' + str( temp_edges_map.graph() ) )
 
 				routes_from_neighbour = temp_edges_map.calculate_all_routes( node, second_node )
 				if routes_from_neighbour == None:
@@ -179,7 +170,7 @@ class traingraph:
 							logging.debug( 'all_routes(): found and added: ' + str( temp_route ) )
 
 		if len( list_of_routes ) == 0:
-			logging.debug( 'all_routes(): END - There is no route from ' + first_node + ' to ' + second_node + ' in the tree: ' + str( self.get_copy_of_edges() )  )
+			logging.debug( 'all_routes(): END - There is no route from ' + first_node + ' to ' + second_node + ' in the tree: ' + str( self.graph() )  )
 			return None
 
 		logging.debug( 'all_routes(): END - I am returning: ' + str( list_of_routes ) )
