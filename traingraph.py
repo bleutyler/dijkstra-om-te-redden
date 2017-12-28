@@ -3,27 +3,37 @@ __author__ = "Tyler Slijboom"
 __copyright__ = "Copyright 2017, PI Solutions"
 __credits__ = ["BMO Bank"]
 __license__ = "GPL"
-__version__ = "0.1"
-#__maintainer__ = "Rob Knight"
+__version__ = "0.2"
 __email__ = "tyler.slijboom@gmail.com"
-__status__ = "Production"
+__status__ = "Development"
+# 0.2 - Added testing with unittest
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 
 import traingraph
 import logging
 
-logging.basicConfig( level=logging.DEBUG, filename='traingraph.log' )
+logging.basicConfig( level=logging.DEBUG, filename='logs/traingraph.log' )
 
 class traingraph:
 
 	def __init__( self, new_edges={} ):
 		self.edges_dictionary = {}
-		for key_1 in new_edges.keys():
-			self.edges_dictionary[ key_1 ] = {}
-			for key_2 in new_edges[ key_1 ].keys():
-				self.edges_dictionary[ key_1 ][ key_2 ] = new_edges[ key_1 ][ key_2 ]
+		if isinstance( new_edges, dict ):
+			for key_1 in new_edges.keys():
+				self.edges_dictionary[ key_1 ] = {}
+				if isinstance( new_edges[ key_1 ], dict ):
+					for key_2 in new_edges[ key_1 ].keys():
+						value = new_edges[ key_1 ][ key_2 ]
+						if isinstance( value, int ):
+							self.edges_dictionary[ key_1 ][ key_2 ] = value
+						else:
+							logging.warning( 'Value [' + key_1 + '][' + key_2 + '] is not an int.  it is type: ' + str( type( value ) ) )
+				else:
+					logging.warning( 'Value [' + key_1 + '] is not a dict.  it is type: ' + str( type( new_edges[ key_1 ] ) ) )
 					
+		else:
+			logging.warning( 'Item passed in was not a dictionary' )
 
 	def shortest_route( self, first_node, second_node ):
 		all_routes = self.calculate_all_routes( first_node, second_node )
