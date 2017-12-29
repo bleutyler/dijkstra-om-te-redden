@@ -6,24 +6,20 @@ __license__ = "GPL"
 __version__ = "0.2.1"
 __email__ = "bleutylerplusplus@gmail.com"
 __status__ = "Development"
-# 0.2 		- Added testing with unittest
-# 0.2.1 	- expanded tests, strengthened method
-# 0.3		- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
-#					TestTrainGraph is thoroughly tested, all other testing is adhoc
 
 # todo:
-#			traingraph renamed to more generic graph object - graphdatastructure
+#			
 # nice to have:
 #			new traingraph object maybe packed nicer?   piweb.graph because there must be better names / data structures
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-import traingraph
+#import graph
 import logging
 
-logging.basicConfig( level=logging.DEBUG, filename='logs/traingraph.log' )
+logging.basicConfig( level=logging.DEBUG, filename='logs/graph.log' )
 
-class traingraph:
+class graph:
 
 	def __init__( self, new_edges={} ):
 		self.edges_dictionary = {}
@@ -42,6 +38,9 @@ class traingraph:
 					
 		else:
 			logging.warning( 'Item passed in was not a dictionary' )
+			
+		self.all_routes = None # Fill this in once with calculate_all_routes()
+		self.all_routes_is_redundant = True
 
 	def shortest_route( self, first_node, second_node ):
 		all_routes = self.calculate_all_routes( first_node, second_node )
@@ -61,7 +60,7 @@ class traingraph:
 
 
 	def route_exists( self, route=[] ):
-		if len( route ) <= 1:
+		if not isinstance( route, list ) or len( route ) <= 1:
 			return False
 
 		start = route[0]
@@ -92,7 +91,7 @@ class traingraph:
 			
 
 
-	def put_edge( self, node_1, node_2, value ):
+	def put_edge( self, node_1, node_2, value ):		
 		# check for is int and in string
 		if not isinstance( node_1, str ) or not isinstance( node_2, str ) or not isinstance( value, int ):
 			return
@@ -100,6 +99,16 @@ class traingraph:
 			pass
 		else:
 			self.edges_dictionary[ node_1 ] = {}
+			self.all_routes_is_redundant = True
+
+		if node_2 in self.edges_dictionary.keys():
+			if self.edges_dictionary[ node_1 ][ node_2 ] == value:
+				return # do nothing to the all_routes_is_redundant field, but we for sure do not make it redundant because the tree is unchanged
+			else:
+				self.all_routes_is_redundant = True
+		else:
+			self.all_routes_is_redundant = True
+				
 		self.edges_dictionary[ node_1 ][ node_2 ] = value
 	
 	def put( self, node_1, node_2, value ):
@@ -132,13 +141,10 @@ class traingraph:
 	def graph( self ):
 		return self.edges_dictionary.copy()
 
-	def return_list_of_unique_nodes( self ):
-		pass
-
-	#def calculate_number_of_stops_between( self, first_node, second_node ):
-	#	pass
-
 	def calculate_all_routes( self, first_node, second_node ):
+		if not self.all_routes_is_redundant:
+			return self.all_routes
+		
 		list_of_routes = []
 		logging.debug( 'all_routes(): ENTER' )
 
@@ -151,6 +157,8 @@ class traingraph:
 		neighbours = self.neighbours_going_out_list( first_node )
 		if neighbours == []:
 			# there are no edges leaving the first_node, so we are done here
+			self.all_routes_is_redundant = False
+			self.all_routes = None
 			return None
 		else:
 			logging.debug( 'all_routes(): looking for paths from neighbours of ' + first_node + ' to ' + second_node )
@@ -181,10 +189,14 @@ class traingraph:
 
 		if len( list_of_routes ) == 0:
 			logging.debug( 'all_routes(): END - There is no route from ' + first_node + ' to ' + second_node + ' in the tree: ' + str( self.graph() )  )
+			self.all_routes_is_redundant = False
+			self.all_routes              = None
 			return None
 
 		logging.debug( 'all_routes(): END - I am returning: ' + str( list_of_routes ) )
-		return list_of_routes 
+		self.all_routes = list_of_routes
+		self.all_routes_is_redundant = False
+		return self.all_routes
 
 
 	def neighbours_going_out_list( self, node ):

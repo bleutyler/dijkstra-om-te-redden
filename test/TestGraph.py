@@ -1,7 +1,7 @@
 import unittest
-import traingraph
+import lib.graph
 
-class TestTrainGraph( unittest.TestCase ):
+class TestGraph( unittest.TestCase ):
 	def setUp( self ):
 		self.simple_dict = { 'A' : { 'B' : 2 , 'C' : 11 }, 'B' : { 'A': 3 , 'C' : 2 } }
 		self.medium_dict = {'A': {'C': 4,'B': 9}, 'C': {'D': 5}, 'B': {'C': 3, 'D': 6}, 'E': {'A': 33, 'B': 3, 'F': 3}, 'D': {'A': 5, 'C': 3}, 'F': {'E': 2, 'D': 7}}
@@ -11,23 +11,23 @@ class TestTrainGraph( unittest.TestCase ):
 
 
 	def test_constructors( self ):
-		tg_empty = traingraph.traingraph()
+		tg_empty = graph.graph()
 		self.assertEqual( tg_empty.graph(), self.empty_dict, 'Constructor with no params gives empty graph' )
-		tg = traingraph.traingraph( self.simple_dict )
+		tg = graph.graph( self.simple_dict )
 		self.assertEqual( tg.graph(), self.simple_dict, 'Constructor with dictionary gives dictionary as the graph' )
 
 		# Input Errors
-		tg_with_list  	= traingraph.traingraph( self.empty_list )
+		tg_with_list  	= lib.graph.graph( self.empty_list )
 		self.assertEqual( tg_with_list.graph(), self.empty_dict, 'Constructor with list gives empty graph' )
-		tg_with_string 	= traingraph.traingraph( 'string here' )
+		tg_with_string 	= lib.graph.graph( 'string here' )
 		self.assertEqual( tg_with_string.graph(), self.empty_dict, 'Constructor with string  gives empty graph' )
 		bizarre_dictionary = { 'A' : 4, 'B' : { 'C' : '4' , 'D' : 4 } }
 		only_valid_values_from_bizarre = { 'A' : {}, 'B' : { 'D' : 4 } }
-		tg_bizarre = traingraph.traingraph( bizarre_dictionary )
+		tg_bizarre = graph.graph( bizarre_dictionary )
 		self.assertEqual( tg_bizarre.graph(), only_valid_values_from_bizarre, 'Constructor with invalid values in the dictionary ignores bad input' )
 
 	def test_getters_and_setters( self ):
-		tg_simple = traingraph.traingraph( self.simple_dict )
+		tg_simple = graph.graph( self.simple_dict )
 		simple_with_new_element = self.simple_dict.copy()
 		simple_with_new_element['C']      = {}
 		simple_with_new_element['C']['D'] = 5
@@ -46,7 +46,7 @@ class TestTrainGraph( unittest.TestCase ):
 		# input errors
 		#####
 
-		tg_input_errors = traingraph.traingraph( self.medium_dict )
+		tg_input_errors = lib.graph.graph( self.medium_dict )
 		tg_input_errors.put_edge( 'A',  'D', 'F' )
 		tg_input_errors.put_edge( 'A',  222,  4  )
 		tg_input_errors.put_edge( None, 'D',  5  )
@@ -56,13 +56,13 @@ class TestTrainGraph( unittest.TestCase ):
 
 	def test_route_methods( self ):
 		
-		short = traingraph.traingraph( self.short_dict) 
+		short = graph.graph( self.short_dict) 
 		self.assertEqual( short.shortest_route( 'A', 'D' ), self.empty_list, ' shortest_route() works - test 1 of 3' )
 		
-		med = traingraph.traingraph( self.med_dict ) 
+		med = graph.graph( self.med_dict ) 
 		self.assertEqual( med.shortest_route( 'A', 'F' ), self.empty_list, ' shortest_route() works - test 2 of 3' )
 		
-		large = traingraph.traingraph( self.large_dict ) 
+		large = graph.graph( self.large_dict ) 
 		self.assertEqual( large.shortest_route( 'A', 'L' ), self.empty_list, ' shortest_route() works - test 3 of 3' )
 
 		expected_list = [ 'A', 'A' ]
@@ -77,13 +77,13 @@ class TestTrainGraph( unittest.TestCase ):
 		self.assertEqual( medium.calculate_all_routes(), expected_list, ' calculate_all_routes() on medium sample data ' )
 
 		exptected_list = []
-		graph_of_unconnected_nodes = traingraph.traingraph( { 'A' : {} , 'B' : {} } )
+		graph_of_unconnected_nodes = lib.graph.graph( { 'A' : {} , 'B' : {} } )
 		self.assertEqual( graph_of_unconnected_nodes.calculate_all_routes(),    self.empty_list, ' calculate_all_routes() on unconnected graph' )
 		self.assertEqual( graph_of_unconnected_nodes.shorest_route( 'A', 'B' ), self.empty_list, ' shorest_route() on unconnected graph' )
 		self.assertFalse( graph_of_unconnected_nodes.route_exists( 'A', 'B' ), ' route_exists() on unconnected graph' )
 		
 		expected_list = []
-		empty_graph = traingraph.traingraph()
+		empty_graph = graph.graph()
 		self.assertEqual( empty_graph.calculate_all_routes(),    self.empty_list, ' calculate_all_routes() on empty graph' )
 		self.assertEqual( empty_graph.shorest_route( 'A', 'B' ), self.empty_list, ' shorest_route() on empty graph' )
 		self.assertFalse( empty_graph.route_exists( 'A', 'B' ), ' route_exists() on empty graph' )
@@ -108,11 +108,11 @@ class TestTrainGraph( unittest.TestCase ):
 		#calculate_all_routes( self, first_node, second_node )
 
 	def test_graph_methods( self ):
-		tg = traingraph.traingraph( self.simple_dict )
+		tg = lib.graph.graph( self.simple_dict )
 		expected_graph = { 'B' : { 'C' : 2 } }
 		self.assertEqual(tg.graph_with_node_removed( 'A' ), expected_graph, 'Node removal works 1 of 2' )
 
-		tg = traingraph.traingraph( self.large_dict )
+		tg = lib.graph.graph( self.large_dict )
 		expected_graph = {'C': {'H': 45, 'D': 5}, 'B': {'C': 3, 'D': 6}, 'E': {'B': 3, 'F': 3}, 'D': {'C': 3}, 'G': {'H': 14}, 'F': {'E': 2, 'D': 7, 'G': 2}, 'I': {'H': 2, 'J': 2}, 'H': {'I': 2, 'C': 45, 'J': 2}, 'K': {'J': 15, 'L' : 4 }, 'J': {'I': 2, 'H': 2, 'K': 15}}
 		self.assertEqual(tg.graph_with_node_removed( 'A' ), expected_graph, 'Node removal works 2 of 2' )
 
@@ -123,13 +123,13 @@ class TestTrainGraph( unittest.TestCase ):
 		# input errors
 		#####
 
-		tg = traingraph.traingraph( self.medium_dict )
+		tg = lib.graph.graph( self.medium_dict )
 		self.assertEqual(tg.graph_with_node_removed( 'noelement' ), self.medium_dict, 'Node removal works for nodes that do not exist' )
 
 
 
 	def test_list_methods( self ):
-		tg = traingraph.traingraph( self.large_dict )
+		tg = lib.graph.graph( self.large_dict )
 		expected_list = [ 'A', 'C' ]
 		self.assertCountEqual( tg.neighbours_going_out_list( 'D' ), expected_list, 'neighbours list finds neighbours of D' )
 		self.assertCountEqual( tg.neighbours_going_out_list( 'L' ), self.empty_list, 'neighbours list finds neighbours of L - none' )

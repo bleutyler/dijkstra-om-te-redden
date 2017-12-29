@@ -44,7 +44,7 @@ formats:
 
 OUTPUT:
 
-stdout
+stdout	each item in the operations file is answered on one line
 
 TEST:
 
@@ -56,7 +56,8 @@ VERSION HISTORY:
 0.2.1 	- expanded tests, strengthened method
 0.3		- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
 					TestTrainGraph is thoroughly tested, all other testing is adhoc
-
+0.3.1	- added analyseren.py, the main executable
+0.4		- traingraph renamed to more generic graph object - lib.graph
 
 DESIGN:
 
