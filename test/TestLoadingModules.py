@@ -8,7 +8,7 @@ class TestLoadingModules( unittest.TestCase ):
 			self.fail( 'Failed to load module: ' + module_name )
 		
 	def test_loading_modules( self ):
-		list_of_modules = [ 'logging', 'sys', 'os', 're' ]  
+		list_of_modules = [ 'logging', 'sys', 'os', 're', 'copy' ]  
 		for mod in list_of_modules:
 			self._test_module( mod )
 
