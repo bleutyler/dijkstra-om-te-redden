@@ -54,10 +54,13 @@ VERSION HISTORY:
 
 0.2 	- Added testing with unittest
 0.2.1 	- expanded tests, strengthened method
-0.3		- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
+0.3	- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
 					TestTrainGraph is thoroughly tested, all other testing is adhoc
 0.3.1	- added analyseren.py, the main executable
-0.4		- traingraph renamed to more generic graph object - lib.graph
+0.4	- traingraph renamed to more generic graph object - lib.graph
+0.4.2	- added analyseren.py, the main executable
+0.4.3	- analyseren will process graph files and command input files
+0.4.4	- analyseren will process shortest route 
 
 DESIGN:
 

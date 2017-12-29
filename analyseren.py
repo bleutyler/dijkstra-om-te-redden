@@ -42,15 +42,16 @@ def execute_command( command, graph ):
 		node_2 = shortest_route_parse.group( 'second_node' )
 		sr = graph.shortest_route( node_1, node_2 )
 		if sr == []:
-			print "NO SUCH ROUTE"
+			print("NO SUCH ROUTE")
 		else:
-			_print_list_to_stdout( sr )
+			print( list_for_stdout( sr ) )
+			
 
-def _print_list_to_stdout( list ):
+def list_for_stdout( list ):
 	list_as_a_string = "" 
 	for item in list:
 		list_as_a_string = list_as_a_string + str( item )
-	print( list_as_a_string + '\n' )
+	return list_as_a_string
 
 
 if __name__ == '__main__':
