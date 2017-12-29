@@ -1,4 +1,3 @@
-# dijkstra-om-te-redden
 Take in a weighted graph as input, and analyse shortest routes
 
 USAGE:
@@ -45,8 +44,18 @@ formats:
 
 OUTPUT:
 
-To stdout
+stdout
 
+TEST:
+
+python -m unittest -v test\Test*
+
+VERSION HISTORY:
+
+0.2 	- Added testing with unittest
+0.2.1 	- expanded tests, strengthened method
+0.3		- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
+					TestTrainGraph is thoroughly tested, all other testing is adhoc
 
 
 DESIGN:
@@ -57,5 +66,12 @@ iterate through the second file, giving us the answers we want.
 The graph is stored as a 2d list, but it is encapsulated in a object.  THen we have methods on the object to answer question 2b) 2c) and 2d)
 
 
+TRANSLATIONS
 
+Dutch							English
+=====							====
+analyseren				 		analyze
 
+dijkstra-om-te-redden 			Dijkstra to the rescue
+								https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+							

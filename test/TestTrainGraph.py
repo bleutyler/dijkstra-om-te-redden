@@ -7,6 +7,7 @@ class TestTrainGraph( unittest.TestCase ):
 		self.medium_dict = {'A': {'C': 4,'B': 9}, 'C': {'D': 5}, 'B': {'C': 3, 'D': 6}, 'E': {'A': 33, 'B': 3, 'F': 3}, 'D': {'A': 5, 'C': 3}, 'F': {'E': 2, 'D': 7}}
 		self.large_dict  = {'A': {'C': 4, 'B': 9}, 'C': {'H': 45, 'D': 5}, 'B': {'C': 3, 'D': 6}, 'E': {'A': 33, 'B': 3, 'F': 3}, 'D': {'A': 5, 'C': 3}, 'G': {'H': 14}, 'F': {'A': 12, 'E': 2, 'D': 7, 'G': 2}, 'I': {'H': 2, 'J': 2}, 'H': {'I': 2, 'C': 45, 'J': 2}, 'K': {'J': 15, 'L' : 4 }, 'J': {'I': 2, 'H': 2, 'K': 15}}
 		self.empty_dict = {}
+		self.empty_list = []
 
 
 	def test_constructors( self ):
@@ -16,7 +17,7 @@ class TestTrainGraph( unittest.TestCase ):
 		self.assertEqual( tg.graph(), self.simple_dict, 'Constructor with dictionary gives dictionary as the graph' )
 
 		# Input Errors
-		tg_with_list  	= traingraph.traingraph( [] )
+		tg_with_list  	= traingraph.traingraph( self.empty_list )
 		self.assertEqual( tg_with_list.graph(), self.empty_dict, 'Constructor with list gives empty graph' )
 		tg_with_string 	= traingraph.traingraph( 'string here' )
 		self.assertEqual( tg_with_string.graph(), self.empty_dict, 'Constructor with string  gives empty graph' )
@@ -56,37 +57,55 @@ class TestTrainGraph( unittest.TestCase ):
 	def test_route_methods( self ):
 		
 		short = traingraph.traingraph( self.short_dict) 
-		expected_list = []
-		self.assertEqual( short.shortest_route( 'A', 'D' ), expected_list, ' shortest_route() works - test 1 of 3' )
+		self.assertEqual( short.shortest_route( 'A', 'D' ), self.empty_list, ' shortest_route() works - test 1 of 3' )
 		
 		med = traingraph.traingraph( self.med_dict ) 
-		expected_list = []
-		self.assertEqual( med.shortest_route( 'A', 'F' ), expected_list, ' shortest_route() works - test 2 of 3' )
+		self.assertEqual( med.shortest_route( 'A', 'F' ), self.empty_list, ' shortest_route() works - test 2 of 3' )
 		
 		large = traingraph.traingraph( self.large_dict ) 
-		expected_list = []
-		self.assertEqual( large.shortest_route( 'A', 'L' ), expected_list, ' shortest_route() works - test 3 of 3' )
+		self.assertEqual( large.shortest_route( 'A', 'L' ), self.empty_list, ' shortest_route() works - test 3 of 3' )
 
 		expected_list = [ 'A', 'A' ]
 		self.assertEqual( large.shortest_route( 'A', 'A' ), expected_list, ' shortest_route() works on a loop, from A to A' )
 		
 		self.assertTrue( short.route_exists( [ 'A', 'A' ] ) )
-		self.assertFalse( short.route_exists( [ 'A', 'Z' ] ) )
+		self.assertTrue( large.route_exists( [ 'C', 'F' ] ) )
+		self.assertFalse( large.route_exists( [ 'C', 'E' ] ) )
+		
+		
+		expected_list = [  ]
+		self.assertEqual( medium.calculate_all_routes(), expected_list, ' calculate_all_routes() on medium sample data ' )
+
+		exptected_list = []
+		graph_of_unconnected_nodes = traingraph.traingraph( { 'A' : {} , 'B' : {} } )
+		self.assertEqual( graph_of_unconnected_nodes.calculate_all_routes(),    self.empty_list, ' calculate_all_routes() on unconnected graph' )
+		self.assertEqual( graph_of_unconnected_nodes.shorest_route( 'A', 'B' ), self.empty_list, ' shorest_route() on unconnected graph' )
+		self.assertFalse( graph_of_unconnected_nodes.route_exists( 'A', 'B' ), ' route_exists() on unconnected graph' )
+		
+		expected_list = []
+		empty_graph = traingraph.traingraph()
+		self.assertEqual( empty_graph.calculate_all_routes(),    self.empty_list, ' calculate_all_routes() on empty graph' )
+		self.assertEqual( empty_graph.shorest_route( 'A', 'B' ), self.empty_list, ' shorest_route() on empty graph' )
+		self.assertFalse( empty_graph.route_exists( 'A', 'B' ), ' route_exists() on empty graph' )
 
 		#####
 		# input errors
 		#####
 
-		expected_list = [ ]
-		self.assertEqual( large.shortest_route( 'A', 'Z' ), expected_list, ' shortest_route() works on nodes that do no exist - test 1 of 3' )
+		self.assertEqual( large.shortest_route( 'A', 'Z' ), self.empty_list, ' shortest_route() works on nodes that do no exist - test 1 of 3' )
+		self.assertEqual( large.shortest_route( 'X', 'A' ), self.empty_list, ' shortest_route() works on nodes that do no exist - test 2 of 3' )
+		self.assertEqual( large.shortest_route( 'X', 'Z' ), self.empty_list, ' shortest_route() works on nodes that do no exist - test 3 of 3' )
 
-		expected_list = [ ]
-		self.assertEqual( large.shortest_route( 'X', 'A' ), expected_list, ' shortest_route() works on nodes that do no exist - test 2 of 3' )
+		self.assertEqual( large.shortest_route( 1 , 'A' ), self.empty_list, ' shortest_route() works on integers - test 1 of 3' )
+		self.assertEqual( large.shortest_route( 'C' , 1 ), self.empty_list, ' shortest_route() works on integers - test 2 of 3' )
+		self.assertEqual( large.shortest_route( 1 , 4 ),   self.empty_list, ' shortest_route() works on integers - test 3 of 3' )
 
-		expected_list = [ ]
-		self.assertEqual( large.shortest_route( 'X', 'Z' ), expected_list, ' shortest_route() works on nodes that do no exist - test 3 of 3' )
-
-		#def calculate_all_routes( self, first_node, second_node ):
+		self.assertFalse( short.route_exists( [ 'A', 'Z' ] ) )
+		self.assertFalse( short.route_exists( [ 'Z', 'C' ] ) )
+		self.assertFalse( short.route_exists( [ 'Z', 'Z' ] ) )
+		self.assertFalse( short.route_exists( self.empty_list ) )
+		
+		#calculate_all_routes( self, first_node, second_node )
 
 	def test_graph_methods( self ):
 		tg = traingraph.traingraph( self.simple_dict )
@@ -113,8 +132,7 @@ class TestTrainGraph( unittest.TestCase ):
 		tg = traingraph.traingraph( self.large_dict )
 		expected_list = [ 'A', 'C' ]
 		self.assertCountEqual( tg.neighbours_going_out_list( 'D' ), expected_list, 'neighbours list finds neighbours of D' )
-		expected_list = []
-		self.assertCountEqual( tg.neighbours_going_out_list( 'L' ), expected_list, 'neighbours list finds neighbours of L - none' )
+		self.assertCountEqual( tg.neighbours_going_out_list( 'L' ), self.empty_list, 'neighbours list finds neighbours of L - none' )
 
 		expected_list = [ 'C', 'B', 'F' ]
 		self.assertCountEqual( tg.neighbours_coming_in_list( 'D' ), expected_list, 'neighbours list finds those who come to D ' )
@@ -125,10 +143,10 @@ class TestTrainGraph( unittest.TestCase ):
 		#####
 		# input errors
 		#####
-
-		expected_list = []
-		self.assertEqual( tg.neighbours_going_out_list( 'Z' ), expected_list, 'neighbours list finds neighbours of node that does not exist' )
+		
+		
+		self.assertEqual( tg.neighbours_going_out_list( 'Z' ), self.empty_list, 'neighbours list finds neighbours of node that does not exist' )
 		expected_list = [ ]
-		self.assertCountEqual( tg.neighbours_coming_in_list( 'noexist' ), expected_list, 'neighbours_coming_in_list() empty on node that is not in the tree' )
+		self.assertCountEqual( tg.neighbours_coming_in_list( 'noexist' ), self.empty_list, 'neighbours_coming_in_list() empty on node that is not in the tree' )
 		
 

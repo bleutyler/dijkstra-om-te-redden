@@ -4,10 +4,17 @@ __copyright__ = "Copyright 2017, PI Solutions"
 __credits__ = ["BMO Bank"]
 __license__ = "GPL"
 __version__ = "0.2.1"
-__email__ = "tyler.slijboom@gmail.com"
+__email__ = "bleutylerplusplus@gmail.com"
 __status__ = "Development"
 # 0.2 		- Added testing with unittest
 # 0.2.1 	- expanded tests, strengthened method
+# 0.3		- all tests completed for traingraph object methods - for the sake of brevity, testing is much less formal after this.  
+#					TestTrainGraph is thoroughly tested, all other testing is adhoc
+
+# todo:
+#			traingraph renamed to more generic graph object - graphdatastructure
+# nice to have:
+#			new traingraph object maybe packed nicer?   piweb.graph because there must be better names / data structures
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 
