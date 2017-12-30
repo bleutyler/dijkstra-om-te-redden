@@ -35,6 +35,7 @@ def get_graph_from_file( graph_file ):
 
 def execute_command( command, graph ):
 	logging.debug( 'Parsing command: "' + str( command ) + '"')
+	# This has to be last
 	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s$', command )
 	if shortest_route_parse:
 		logging.info( 'Parsing a shortest route request' )
@@ -42,10 +43,12 @@ def execute_command( command, graph ):
 		node_2 = shortest_route_parse.group( 'second_node' )
 		sr = graph.shortest_route( node_1, node_2 )
 		if sr == []:
-			print("NO SUCH ROUTE")
+			return "NO SUCH ROUTE"
 		else:
-			print( list_for_stdout( sr ) )
+			return list_for_stdout( sr ) 
 			
+	
+	sho
 
 def list_for_stdout( list ):
 	list_as_a_string = "" 
