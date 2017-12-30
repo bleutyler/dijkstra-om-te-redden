@@ -35,6 +35,9 @@ def get_graph_from_file( graph_file ):
 
 def execute_command( command, graph ):
 	logging.debug( 'Parsing command: "' + str( command ) + '"')
+	max_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>ms)', command )
+	max_distance_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>d)', command )
+	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>d)', command )
 	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s$', command )
 	if shortest_route_parse:
 		logging.info( 'Parsing a shortest route request' )
@@ -42,9 +45,9 @@ def execute_command( command, graph ):
 		node_2 = shortest_route_parse.group( 'second_node' )
 		sr = graph.shortest_route( node_1, node_2 )
 		if sr == []:
-			print("NO SUCH ROUTE")
+			return "NO SUCH ROUTE"
 		else:
-			print( list_for_stdout( sr ) )
+			return list_for_stdout( sr ) 
 			
 
 def list_for_stdout( list ):
@@ -72,5 +75,11 @@ if __name__ == '__main__':
 		sys.exit( 1 )
 	
 	for command in operations:
-		execute_command( command , my_graph )
+		return_string = ""
+		return_string = execute_command( command , my_graph )
+		if return_string == "":
+			print "Unknown command: " + command
+		else:
+			print return_string
+		
 
