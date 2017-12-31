@@ -88,3 +88,10 @@ analyseren				 		analyze
 dijkstra-om-te-redden 			Dijkstra-to-the-rescue
 								https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 							
+
+TO DO:
+had to redo input re-reading requiremnets.  SMALL adjustments to be made to analyseren
+rewrite design in readme
+checking readme formatting
+see if lib.config can be used more?
+clean up repo _pycache_ needs to go
