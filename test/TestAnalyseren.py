@@ -20,6 +20,11 @@ class TestAnalyseren( unittest.TestCase ):
 		# self.empty_dict = {}
 		# self.empty_list = []
 
+	def _test_strings_of_paths_are_equal( self, list_1, list_2 , msg ):
+		list_of_first_items  = list_1.split( ', ' )
+		list_of_second_items = list_2.split( ', ' )
+		self.assertCountEqual( list_1, list_2, msg )
+
 	def test_execute_command( self ):
 		expected_output = 'CE'
 		test_output	= analyseren.execute_command( 'CE' , self.example_graph )
@@ -38,48 +43,46 @@ class TestAnalyseren( unittest.TestCase ):
 		self.assertEqual( expected_output, test_output, 'execute_command() shortest path' )
 
 
-
-	@unittest.skip( "method not yet implemented" )
-	def test_exe_to_stkpi( self ):
-		expected_output = 'ms1'
-		test_output	= analyseren.execute_command( 'EC 5ms' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() max stops checks' )
+		expected_output = 'EAC, EABC, EABDC, EBC, EBDC, EBDAC, EFDC, EFDAC, EFAC, EFABC, EFGHC'
+		test_output	= analyseren.execute_command( 'EC 5ms' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max stops checks' )
 
 		expected_output = config.NO_ROUTE_TO_USER_STRING
-		test_output	= analyseren.execute_command( 'EC 2ms' , self.example_graph )
+		test_output	= analyseren.execute_command( 'EC 2ms' , self.large_graph )
 		self.assertEqual( expected_output, test_output, 'execute_command() max stops checks stops exist, but more than max ' )
 
-		expected_output = 'ESA'
-		test_output	= analyseren.execute_command( 'EL 5ms' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() max stops checks stops exist, but some more than max ' )
+		expected_output = 'EAC, EBC'
+		test_output	= analyseren.execute_command( 'EC 3ms' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max stops checks stops exist, but some more than max ' )
 
 
 
-		expected_output = 's1'
-		test_output	= analyseren.execute_command( 'EC 5s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
+		expected_output = 'EABDC, EBDAC, EFDAC, EFABC, EFGHC'
+		test_output	= analyseren.execute_command( 'EC 5s' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks' )
 
-		expected_output = 's1'
-		test_output	= analyseren.execute_command( 'EC 2s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
-
-		expected_output = config.NO_ROUTE_TO_USER_STRING
-		test_output	= analyseren.execute_command( 'EC 3s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks, none' )
-
-
-
-		expected_output = 's1'
-		test_output	= analyseren.execute_command( 'EC 5s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
-
-		expected_output = 's1'
-		test_output	= analyseren.execute_command( 'EC 2s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
+		expected_output = 'AB'
+		test_output	= analyseren.execute_command( 'AB 2s' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks' )
 
 		expected_output = config.NO_ROUTE_TO_USER_STRING
-		test_output	= analyseren.execute_command( 'EC 3s' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks, none' )
+		test_output	= analyseren.execute_command( 'EL 6s' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks, none' )
+
+
+
+		expected_output = 'EAC, EABC, EBC, EBDC, EBDAC, EFAC, EFABC, EFABDC, EFDC, EFDAC, EFDABC'
+		test_output	= analyseren.execute_command( 'EC 50d' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test we got ' + test_output )
+
+		expected_output = 'EFDC, EFDAC, EFAC, EBC, EBDC, EBDAC'
+		test_output	= analyseren.execute_command( 'EC 20d' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test longer routes exist but are not shown' )
+
+		expected_output = config.NO_ROUTE_TO_USER_STRING
+		test_output	= analyseren.execute_command( 'EC 5d' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test no routes found ' )
+
 
 
 		## ## ## ## ## ## ## ##

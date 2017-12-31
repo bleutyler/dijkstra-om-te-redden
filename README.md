@@ -26,14 +26,14 @@ Second (REQUESTS) file format:
 The second input file is the calculations asked to be done on the input.  Each line in the file is a requested calculation and can be of one of the following 
 formats:
 
-1.  A list of nodes, outlining a specific route.  example: "AED"
+1.  A list of nodes, outlining a specific route, ending with 'l'.  example: "AED l"
 	
 	A request for the length of this route, A to E to D.  If no such route exists, 'NO SUCH ROUTE'.  1st and last node can be the same
 
 2.  A pair of nodes, asking for specifics about the possible routes between them.  After the pairing is listed, 
     then a set of characters to ask for something specific betweeen them:
 
-	a.  '<noting>' asking for the length of the shortest route between the pair.  example: "AC" wants the shortest route from A to C
+	a.  ' s' asking for the length of the shortest route between the pair.  example: "AC s" wants the shortest route from A to C
 
 	b.  ' <number>s' - Asking for the number of routes with exactly N stops between them.  Example: "AC 4s" wants the number of routes between
 		A and C with exactly 4 stops.

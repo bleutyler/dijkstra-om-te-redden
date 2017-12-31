@@ -37,9 +37,9 @@ def get_graph_from_file( graph_file ):
 
 def execute_command( command, graph ):
 	logging.debug( 'Parsing command: "' + str( command ) + '"')
-	max_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>ms)', command )
-	max_distance_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>d)', command )
-	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>s)', command )
+	max_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)ms', command )
+	max_distance_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)d', command )
+	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)s', command )
 	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s*$', command )
 
 	if max_stops_parse:
@@ -48,6 +48,9 @@ def execute_command( command, graph ):
 		node_2 		= max_stops_parse.group( 'second_node' )
 		maximum_stops 	= int( max_stops_parse.group( 'number' ) )
 		all_routes = graph.calculate_all_routes( node_1, node_2 )
+
+		if all_routes == None:
+			return lib.config.NO_ROUTE_TO_USER_STRING
 
 		return_string = ''
 		for route in all_routes:
@@ -58,10 +61,57 @@ def execute_command( command, graph ):
 					return_string = return_string + ', ' + list_for_stdout( route )
 		
 		if return_string == '':
-			return config.NO_ROUTE_TO_USER_STRING
+			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
 			return return_string
 		
+	elif exact_stops_parse:
+		logging.debug( 'Parsing an exact X stops route request' )
+		node_1 		= exact_stops_parse.group( 'first_node' )
+		node_2 		= exact_stops_parse.group( 'second_node' )
+		num_stops 	= int( exact_stops_parse.group( 'number' ) )
+		all_routes = graph.calculate_all_routes( node_1, node_2 )
+
+		if all_routes == None:
+			return lib.config.NO_ROUTE_TO_USER_STRING
+
+		return_string = ''
+		for route in all_routes:
+			if len( route ) == num_stops:
+				if return_string == '':
+					return_string = list_for_stdout( route )
+				else:	
+					return_string = return_string + ', ' + list_for_stdout( route )
+		
+		if return_string == '':
+			return lib.config.NO_ROUTE_TO_USER_STRING
+		else:
+			return return_string
+		
+
+	if max_distance_parse: 
+		logging.debug( 'Parsing a max distance route request' )
+		node_1 		= max_distance_parse.group( 'first_node' )
+		node_2 		= max_distance_parse.group( 'second_node' )
+		distance  	= int( max_distance_parse.group( 'number' ) )
+		all_routes = graph.calculate_all_routes( node_1, node_2 )
+
+		if all_routes == None:
+			return lib.config.NO_ROUTE_TO_USER_STRING
+			
+		return_string = ''
+		for route in all_routes:
+			if graph.distance( route ) <= distance:
+				if return_string == '':
+					return_string = list_for_stdout( route )
+				else:	
+					return_string = return_string + ', ' + list_for_stdout( route )
+		
+		if return_string == '':
+			return lib.config.NO_ROUTE_TO_USER_STRING
+		else:
+			return return_string
+
 	elif shortest_route_parse:
 		logging.debug( 'Parsing a shortest route request' )
 		node_1 = shortest_route_parse.group( 'first_node' )
