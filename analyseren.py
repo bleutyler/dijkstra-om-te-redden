@@ -4,8 +4,10 @@ import sys
 import os
 import lib.graph
 import logging
+import lib.config
 
 logging.basicConfig( level=logging.DEBUG, filename='logs/analyseren.log' )
+NO_ROUTE_TO_USER_STRING = 'NO SUCH ROUTE'
 
 def read_in_graph_file_and_operations_file_and_output_results( graph_file, operations_file ):
 	pass
@@ -37,20 +39,41 @@ def execute_command( command, graph ):
 	logging.debug( 'Parsing command: "' + str( command ) + '"')
 	max_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>ms)', command )
 	max_distance_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>d)', command )
-	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>d)', command )
-	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s$', command )
-	if shortest_route_parse:
-		logging.info( 'Parsing a shortest route request' )
+	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>s)', command )
+	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s*$', command )
+
+	if max_stops_parse:
+		logging.debug( 'Parsing a maximum route request' )
+		node_1 		= max_stops_parse.group( 'first_node' )
+		node_2 		= max_stops_parse.group( 'second_node' )
+		maximum_stops 	= int( max_stops_parse.group( 'number' ) )
+		all_routes = graph.calculate_all_routes( node_1, node_2 )
+
+		return_string = ''
+		for route in all_routes:
+			if len( route ) <= maximum_stops:
+				if return_string == '':
+					return_string = list_for_stdout( route )
+				else:	
+					return_string = return_string + ', ' + list_for_stdout( route )
+		
+		if return_string == '':
+			return config.NO_ROUTE_TO_USER_STRING
+		else:
+			return return_string
+		
+	elif shortest_route_parse:
+		logging.debug( 'Parsing a shortest route request' )
 		node_1 = shortest_route_parse.group( 'first_node' )
 		node_2 = shortest_route_parse.group( 'second_node' )
 		sr = graph.shortest_route( node_1, node_2 )
 		if sr == []:
-			return "NO SUCH ROUTE"
+			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
 			return list_for_stdout( sr ) 
-			
-	
-	sho
+	else:
+		return 'Unknown Command: ' + str( command )
+		
 
 def list_for_stdout( list ):
 	list_as_a_string = "" 
@@ -77,11 +100,6 @@ if __name__ == '__main__':
 		sys.exit( 1 )
 	
 	for command in operations:
-		return_string = ""
-		return_string = execute_command( command , my_graph )
-		if return_string == "":
-			print "Unknown command: " + command
-		else:
-			print return_string
+		print( execute_command( command , my_graph ))
 		
 

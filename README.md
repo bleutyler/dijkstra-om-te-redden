@@ -19,6 +19,7 @@ Assumptions:
 
 	Distances are measured in positive integers only
 
+	Input that fails these is ignored.
 
 Second (REQUESTS) file format:
 
@@ -44,11 +45,16 @@ formats:
 
 OUTPUT:
 
-stdout	each item in the operations file is answered on one line
+stdout	
+
+each item in the operations file is answered on one line
 
 TEST:
 
-python -m unittest -v test\Test*
+On the command line: 
+
+python -m unittest -v  test/Test*
+
 
 VERSION HISTORY:
 
@@ -61,6 +67,9 @@ VERSION HISTORY:
 0.4.2	- added analyseren.py, the main executable
 0.4.3	- analyseren will process graph files and command input files
 0.4.4	- analyseren will process shortest route 
+0.4.5	- TestAnalyseren.py created, tests shortest route, lib.config created
+0.4.6	- all cases added to analyseren
+0.4.7	- TestAnalyseren.py updated to match all cases in analyseren.py
 
 DESIGN:
 
@@ -76,6 +85,6 @@ Dutch							English
 =====							====
 analyseren				 		analyze
 
-dijkstra-om-te-redden 			Dijkstra to the rescue
+dijkstra-om-te-redden 			Dijkstra-to-the-rescue
 								https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 							
