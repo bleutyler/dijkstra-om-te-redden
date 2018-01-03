@@ -18,7 +18,7 @@ __status__ = "Development"
 import logging
 import copy
 
-logging.basicConfig( level=logging.DEBUG, filename='logs/graph.log' )
+logging.basicConfig( level=logging.INFO, filename='logs/graph.log' )
 
 class graph:
 
@@ -134,9 +134,9 @@ class graph:
 		return_string = ''
 		for first_level in self.edges_dictionary.keys():
 			if return_string == '':
-				return_string = return_string + str( self.edges_dictionary[ first_level ] )
+				return_string = first_level + ' : ' + str( self.edges_dictionary[ first_level ] )
 			else:
-				return_string = return_string + ", " + str( self.edges_dictionary[ first_level ] )
+				return_string = return_string + ", " + first_level + ' : ' + str( self.edges_dictionary[ first_level ] )
 		
 		return return_string
 
@@ -204,6 +204,54 @@ class graph:
 
 			return return_list
 		return []
+
+	def return_routes_with_maximum_stops( self, node_1, node_2, max_stops ):
+		pass
+
+	def return_routes_travelling_maximum_distance( self, node_1, node_2, max_distance ):
+		return_list = []
+		if max_distance <= 0:
+			logging.debug( 'want to travel a distance of ' + str( max_distance ) + ' so return empty' )
+			return []
+
+		if self.edge_exists( node_1, node_2 ):
+			distance          = self.edges_dictionary[node_1][node_2]
+			logging.debug( 'distance() travelled a distance of ' + str( distance ) + ' DIRECTLY from ' + node_1 + ' to ' + node_2 )
+			if distance < max_distance:
+				logging.debug( 'distance() it was low enough, so add that as a possible route.' )
+				return_list.append( [ node_1, node_2 ] )
+				logging.debug( 'distance() check for other routes from ' + node_2 + ' to ' + node_2 + ' with distance < ' + str(max_distance - distance) )
+				sub_lists = self.return_routes_travelling_maximum_distance( node_2, node_2, max_distance - distance )
+				if sub_lists != []:
+					logging.debug( 'Wow!  found loops to ' + node_2 + ' after already connecting, so add them as a route' ) 
+					for route in sub_lists:
+						temp_route = [ node_1 ]
+						temp_route.extend( route )
+						return_list.append( temp_route )
+			else:
+				pass
+
+		# find neighbours a distance away
+		neighbours = self.neighbours_going_out_list( node_1 )
+		if neighbours == []:
+			# there are no edges leaving the first_node, so we are done here
+			return []
+		else:
+			for node in neighbours:
+				if node == node_2:
+					# already handled this above
+					continue
+
+				distance = self.edges_dictionary[ node_1 ][ node ]
+				sub_lists = self.return_routes_travelling_maximum_distance( node, node_2, max_distance - distance )
+
+				if sub_lists != []:
+					for route in sub_lists:
+						temp_route = [ node_1 ]
+						temp_route.extend( route )
+						return_list.append( temp_route )
+
+		return return_list
 
 #	def neighbours_coming_in_list( self, node ):
 #		return_list = []

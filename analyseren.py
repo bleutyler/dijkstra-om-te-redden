@@ -41,7 +41,7 @@ def execute_command( command, graph ):
 	max_distance_parse   = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)d\s*$', command )
 	exact_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)s\s*$', command )
 	route_length_parse   = re.search( '^(?P<nodes>\w+) l\s*$', command )
-	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s*$', command )
+	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) s\s*$', command )
 
 	if max_stops_parse:
 		# 6. The number of trips starting at C and ending at C with a maximum of 3 stops.
@@ -54,6 +54,10 @@ def execute_command( command, graph ):
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 
+		# If we are doing a loop, then adjust calculations for counting the same node twice
+		if node_1 == node_2:
+			maximum_stops 	= maximum_stops + 1
+			
 		return_list = []
 		for route in all_routes:
 			if len( route ) <= maximum_stops:
@@ -72,6 +76,10 @@ def execute_command( command, graph ):
 		num_stops 	= int( exact_stops_parse.group( 'number' ) )
 		all_routes = graph.calculate_all_routes( node_1, node_2 )
 
+		# If we are doing a loop, then adjust calculations for counting the same node twice
+		if node_1 == node_2:
+			num_stops = num_stops + 1
+
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 
@@ -88,9 +96,10 @@ def execute_command( command, graph ):
 	elif route_length_parse:
 		# 5. The distance of the route A-E-D
 		logging.debug( 'Parsing a route length request command on :' + command )
+		striped_command = command.strip()
 		# nodes_list = route_length_parse.group( 'nodes' ).split( '' )
-		logging.debug( 'Making a list on :' + str( command[0:-2] ) )
-		nodes_list = list( command[0:-2] )
+		logging.debug( 'Making a list on :' + str( striped_command[0:-2] ) )
+		nodes_list = list( striped_command[0:-2] )
 		logging.debug( 'The routes list is: ' + str( nodes_list ) )
 		if graph.route_exists( nodes_list ):
 			logging.debug( 'The route exists: ' + str( nodes_list ) )
@@ -105,7 +114,7 @@ def execute_command( command, graph ):
 		node_1 		= max_distance_parse.group( 'first_node' )
 		node_2 		= max_distance_parse.group( 'second_node' )
 		distance  	= int( max_distance_parse.group( 'number' ) )
-		all_routes = graph.calculate_all_routes( node_1, node_2 )
+		all_routes = graph.return_routes_travelling_maximum_distance( node_1, node_2, distance )
 
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
