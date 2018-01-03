@@ -70,11 +70,14 @@ VERSION HISTORY:
 0.4.5	- TestAnalyseren.py created, tests shortest route, lib.config created
 0.4.6	- all cases added to analyseren
 0.4.7	- TestAnalyseren.py updated to match all cases in analyseren.py
+0.4.8	- redid methods to better match requirements
+0.4.9	- lib.graph.__str__() completed
 
 DESIGN:
 
-2 main parts, first iterate through the first file, generating a 2d array of distances between a pair of node according to the first input file.  Then
-iterate through the second file, giving us the answers we want.
+2 main parts, first iterate through the first file, generating a 2d array of distances between a pair of node according to the first input file.  
+This is the lib.graph() object.  
+Then iterate through the second file, giving us the answers we want.
 
 The graph is stored as a 2d list, but it is encapsulated in a object.  THen we have methods on the object to answer question 2b) 2c) and 2d)
 
@@ -91,7 +94,4 @@ dijkstra-om-te-redden 			Dijkstra-to-the-rescue
 
 TO DO:
 had to redo input re-reading requiremnets.  SMALL adjustments to be made to analyseren
-rewrite design in readme
-checking readme formatting
-see if lib.config can be used more?
 clean up repo _pycache_ needs to go
