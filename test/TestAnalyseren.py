@@ -25,25 +25,26 @@ class TestAnalyseren( unittest.TestCase ):
 		list_of_second_items = list_2.split( ', ' )
 		self.assertCountEqual( list_1, list_2, msg )
 
-	def test_execute_command( self ):
-		expected_output = 'CE'
-		test_output	= analyseren.execute_command( 'CE' , self.example_graph )
+	def test_execute_command_shortest_path( self ):
+		expected_output = '14'
+		test_output	= analyseren.execute_command( 'AEBC l' , self.example_graph )
 		self.assertEqual( expected_output, test_output, 'execute_command() shortest path ' )
 
 		expected_output = config.NO_ROUTE_TO_USER_STRING
-		test_output	= analyseren.execute_command( 'ZE' , self.example_graph )
+		test_output	= analyseren.execute_command( 'ZABC l' , self.example_graph )
 		self.assertEqual( expected_output, test_output, 'execute_command() shortest path no route' )
 
-		expected_output = 'ABC'
-		test_output	= analyseren.execute_command( 'AC' , self.example_graph )
+		expected_output = '18'
+		test_output	= analyseren.execute_command( 'ADEBC l' , self.example_graph )
 		self.assertEqual( expected_output, test_output, 'execute_command() shortest path' )
 
-		expected_output = 'EBC'
-		test_output	= analyseren.execute_command( 'EC' , self.example_graph )
-		self.assertEqual( expected_output, test_output, 'execute_command() shortest path' )
+		expected_output = '21'
+		test_output	= analyseren.execute_command( 'CDEBC l' , self.example_graph )
+		self.assertEqual( expected_output, test_output, 'execute_command() shortest path start == end' )
 
 
-		expected_output = 'EAC, EABC, EABDC, EBC, EBDC, EBDAC, EFDC, EFDAC, EFAC, EFABC, EFGHC'
+	def test_execute_command_max_stops( self ):
+		expected_output = '11'
 		test_output	= analyseren.execute_command( 'EC 5ms' , self.large_graph )
 		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max stops checks' )
 
@@ -51,44 +52,66 @@ class TestAnalyseren( unittest.TestCase ):
 		test_output	= analyseren.execute_command( 'EC 2ms' , self.large_graph )
 		self.assertEqual( expected_output, test_output, 'execute_command() max stops checks stops exist, but more than max ' )
 
-		expected_output = 'EAC, EBC'
+		expected_output = '2'
 		test_output	= analyseren.execute_command( 'EC 3ms' , self.large_graph )
 		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max stops checks stops exist, but some more than max ' )
 
 
 
-		expected_output = 'EABDC, EBDAC, EFDAC, EFABC, EFGHC'
+	def test_execute_command_n_stops( self ):
+		expected_output = '5'
 		test_output	= analyseren.execute_command( 'EC 5s' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks' )
+		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
 
-		expected_output = 'AB'
+		expected_output = '1'
 		test_output	= analyseren.execute_command( 'AB 2s' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks' )
+		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks' )
 
 		expected_output = config.NO_ROUTE_TO_USER_STRING
 		test_output	= analyseren.execute_command( 'EL 6s' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() only X stops checks, none' )
+		self.assertEqual( expected_output, test_output, 'execute_command() only X stops checks, none' )
 
 
 
-		expected_output = 'EAC, EABC, EBC, EBDC, EBDAC, EFAC, EFABC, EFABDC, EFDC, EFDAC, EFDABC'
+	def test_execute_max_distance( self ):
+		expected_output = '11'
 		test_output	= analyseren.execute_command( 'EC 50d' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test we got ' + test_output )
+		self.assertEqual( expected_output, test_output, 'execute_command() max distance test we got ' + test_output )
 
-		expected_output = 'EFDC, EFDAC, EFAC, EBC, EBDC, EBDAC'
+		expected_output = '6'
 		test_output	= analyseren.execute_command( 'EC 20d' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test longer routes exist but are not shown' )
+		self.assertEqual( expected_output, test_output, 'execute_command() max distance test longer routes exist but are not shown' )
 
 		expected_output = config.NO_ROUTE_TO_USER_STRING
 		test_output	= analyseren.execute_command( 'EC 5d' , self.large_graph )
-		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() max distance test no routes found ' )
+		self.assertEqual( expected_output, test_output, 'execute_command() max distance test no routes found ' )
+
+
+	def test_execute_length_of_path( self ):
+		expected_output = '33'
+		test_output	= analyseren.execute_command( 'EFABDC l' , self.large_graph )
+		self.assertEqual( expected_output, test_output, 'execute_command() path len 1/2' )
+		
+		expected_output = '19'
+		test_output	= analyseren.execute_command( 'EFAC l' , self.large_graph )
+		self.assertEqual( expected_output, test_output, 'execute_command() path len 2/2' )
+
+		expected_output = config.NO_ROUTE_TO_USER_STRING
+		test_output	= analyseren.execute_command( 'IAE l' , self.large_graph )
+		self.assertEqual( expected_output, test_output, 'execute_command() path len path no exist' )
+
+		expected_output = '5'
+		test_output	= analyseren.execute_command( 'EFE l' , self.large_graph )
+		self._test_strings_of_paths_are_equal( expected_output, test_output, 'execute_command() path len start == end' )
 
 
 
-		## ## ## ## ## ## ## ##
-		## ## ## ## ## ## ## ##
-		## input errors
-		## ## ## ## ## ## ## ##
+
+
+	## ## ## ## ## ## ## ##
+	## input errors
+	## ## ## ## ## ## ## ##
+	def test_execute_command_input_errors( self ):
 
 		expected_output = 'Unknown Command: ZEEDMORE'
 		test_output	= analyseren.execute_command( 'ZEEDMORE' , self.example_graph )

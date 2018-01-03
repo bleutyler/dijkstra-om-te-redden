@@ -44,6 +44,7 @@ def execute_command( command, graph ):
 	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s*$', command )
 
 	if max_stops_parse:
+		# 6. The number of trips starting at C and ending at C with a maximum of 3 stops.
 		logging.debug( 'Parsing a maximum route request' )
 		node_1 		= max_stops_parse.group( 'first_node' )
 		node_2 		= max_stops_parse.group( 'second_node' )
@@ -53,21 +54,18 @@ def execute_command( command, graph ):
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 
-		return_string = ''
+		return_list = []
 		for route in all_routes:
 			if len( route ) <= maximum_stops:
-				if return_string == '':
-					return_string = list_for_stdout( route )
-				else:	
-					return_string = return_string + ', ' + list_for_stdout( route )
+				return_list.append( route )
 		
-		if return_string == '':
+		if return_list == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return return_string
+			return str( len( return_list ) )
 		
 	elif exact_stops_parse:
-		# 7. The number of trips starting at A and ending at C with exactly 4 stops.  In the sample data below
+		# 7. The number of trips starting at A and ending at C with exactly 4 stops.  
 		logging.debug( 'Parsing an exact X stops route request' )
 		node_1 		= exact_stops_parse.group( 'first_node' )
 		node_2 		= exact_stops_parse.group( 'second_node' )
@@ -77,26 +75,28 @@ def execute_command( command, graph ):
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 
-		return_string = ''
+		return_list = []
 		for route in all_routes:
 			if len( route ) == num_stops:
-				if return_string == '':
-					return_string = list_for_stdout( route )
-				else:	
-					return_string = return_string + ', ' + list_for_stdout( route )
+				return_list.append( route ) 
 		
-		if return_string == '':
+		if return_list == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return return_string
+			return str( len( return_list ) )
 
 	elif route_length_parse:
 		# 5. The distance of the route A-E-D
-		logging.debug( 'Parsing a route length request' )
-		nodes_list = max_distance_parse.group( 'nodes' ).split( '' )
-		if graph.path_exists( nodes_list ):
+		logging.debug( 'Parsing a route length request command on :' + command )
+		# nodes_list = route_length_parse.group( 'nodes' ).split( '' )
+		logging.debug( 'Making a list on :' + str( command[0:-2] ) )
+		nodes_list = list( command[0:-2] )
+		logging.debug( 'The routes list is: ' + str( nodes_list ) )
+		if graph.route_exists( nodes_list ):
+			logging.debug( 'The route exists: ' + str( nodes_list ) )
 			return str( graph.distance( nodes_list ) )
 		else:
+			logging.debug( 'The was foudn not to exist! '  )
 			return lib.config.NO_ROUTE_TO_USER_STRING
 
 	elif max_distance_parse: 
