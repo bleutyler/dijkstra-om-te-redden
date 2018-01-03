@@ -88,11 +88,10 @@ The graph is stored as a 2d list, but it is encapsulated in a object.  THen we h
 
 TRANSLATIONS
 
-Dutch							English
-=====							====
-analyseren				 		analyze
-
-dijkstra-om-te-redden 			Dijkstra-to-the-rescue
+Dutch	|	English
+-----	|	--------
+analyseren	|	analyze
+dijkstra-om-te-redden	|	Dijkstra-to-the-rescue
 								https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 							
 
