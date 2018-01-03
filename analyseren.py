@@ -37,9 +37,10 @@ def get_graph_from_file( graph_file ):
 
 def execute_command( command, graph ):
 	logging.debug( 'Parsing command: "' + str( command ) + '"')
-	max_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)ms', command )
-	max_distance_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)d', command )
-	exact_stops_parse  = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)s', command )
+	max_stops_parse      = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)ms\s*$', command )
+	max_distance_parse   = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)d\s*$', command )
+	exact_stops_parse    = re.search( '^(?P<first_node>\w)(?P<second_node>\w) (?P<number>\d+)s\s*$', command )
+	route_length_parse   = re.search( '^(?P<nodes>\w+) l\s*$', command )
 	shortest_route_parse = re.search( '^(?P<first_node>\w)(?P<second_node>\w)\s*$', command )
 
 	if max_stops_parse:
@@ -66,6 +67,7 @@ def execute_command( command, graph ):
 			return return_string
 		
 	elif exact_stops_parse:
+		# 7. The number of trips starting at A and ending at C with exactly 4 stops.  In the sample data below
 		logging.debug( 'Parsing an exact X stops route request' )
 		node_1 		= exact_stops_parse.group( 'first_node' )
 		node_2 		= exact_stops_parse.group( 'second_node' )
@@ -87,9 +89,18 @@ def execute_command( command, graph ):
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
 			return return_string
-		
 
-	if max_distance_parse: 
+	elif route_length_parse:
+		# 5. The distance of the route A-E-D
+		logging.debug( 'Parsing a route length request' )
+		nodes_list = max_distance_parse.group( 'nodes' ).split( '' )
+		if graph.path_exists( nodes_list ):
+			return str( graph.distance( nodes_list ) )
+		else:
+			return lib.config.NO_ROUTE_TO_USER_STRING
+
+	elif max_distance_parse: 
+		# 10. The number of different routes from C to C with a distance of less than 30.
 		logging.debug( 'Parsing a max distance route request' )
 		node_1 		= max_distance_parse.group( 'first_node' )
 		node_2 		= max_distance_parse.group( 'second_node' )
@@ -99,28 +110,27 @@ def execute_command( command, graph ):
 		if all_routes == None:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 			
-		return_string = ''
+		return_routes = []
 		for route in all_routes:
 			if graph.distance( route ) <= distance:
-				if return_string == '':
-					return_string = list_for_stdout( route )
-				else:	
-					return_string = return_string + ', ' + list_for_stdout( route )
+				return_routes.append( route )
 		
-		if return_string == '':
+		if return_routes == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return return_string
+			return str( len( return_routes ) )
 
 	elif shortest_route_parse:
+		# 9. The length of the shortest route (in terms of distance to travel) from B to B.
 		logging.debug( 'Parsing a shortest route request' )
 		node_1 = shortest_route_parse.group( 'first_node' )
 		node_2 = shortest_route_parse.group( 'second_node' )
 		sr = graph.shortest_route( node_1, node_2 )
+		
 		if sr == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return list_for_stdout( sr ) 
+			return str( graph.distance( sr ) )
 	else:
 		return 'Unknown Command: ' + str( command )
 		
