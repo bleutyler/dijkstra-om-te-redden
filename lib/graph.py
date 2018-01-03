@@ -205,8 +205,45 @@ class graph:
 			return return_list
 		return []
 
-	def return_routes_with_maximum_stops( self, node_1, node_2, max_stops ):
-		pass
+	def return_routes_within_x_stops( self, node_1, node_2, max_stops ):
+		return_list = []
+		if max_stops <= 0:
+			return []
+
+		if self.edge_exists( node_1, node_2 ):
+			logging.debug( 'distance() it was low enough, so add that as a possible route.' )
+			if max_stops == 1:
+				return_list.append( [ node_1, node_2 ] )
+
+			logging.debug( 'max_stops() check for other routes from ' + node_2 + ' to ' + node_2 + ' with max stops < ' + str(max_stops - 1) )
+			sub_lists = self.return_routes_within_x_stops( node_2, node_2, max_stops - 1 )
+			if sub_lists != []:
+				logging.debug( 'Wow!  found loops to ' + node_2 + ' after already connecting, so add them as a route' ) 
+				for route in sub_lists:
+					temp_route = [ node_1 ]
+					temp_route.extend( route )
+					return_list.append( temp_route )
+
+		# find neighbours a distance away
+		neighbours = self.neighbours_going_out_list( node_1 )
+		if neighbours == []:
+			# there are no edges leaving the first_node, so we are done here
+			return []
+		else:
+			for node in neighbours:
+				if node == node_2:
+					# already handled this above
+					continue
+
+				sub_lists = self.return_routes_within_x_stops( node, node_2, max_stops - 1 )
+
+				if sub_lists != []:
+					for route in sub_lists:
+						temp_route = [ node_1 ]
+						temp_route.extend( route )
+						return_list.append( temp_route )
+
+		return return_list
 
 	def return_routes_travelling_maximum_distance( self, node_1, node_2, max_distance ):
 		return_list = []

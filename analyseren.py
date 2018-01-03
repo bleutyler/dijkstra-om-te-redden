@@ -49,24 +49,21 @@ def execute_command( command, graph ):
 		node_1 		= max_stops_parse.group( 'first_node' )
 		node_2 		= max_stops_parse.group( 'second_node' )
 		maximum_stops 	= int( max_stops_parse.group( 'number' ) )
-		all_routes = graph.calculate_all_routes( node_1, node_2 )
-
-		if all_routes == None:
-			return lib.config.NO_ROUTE_TO_USER_STRING
 
 		# If we are doing a loop, then adjust calculations for counting the same node twice
 		if node_1 == node_2:
-			maximum_stops 	= maximum_stops + 1
-			
-		return_list = []
-		for route in all_routes:
-			if len( route ) <= maximum_stops:
-				return_list.append( route )
-		
-		if return_list == []:
+			maximum_stops = maximum_stops + 1
+
+		all_routes = []
+		for number_stops in range( 0, maximum_stops ):
+			routes_in_this_range = graph.return_routes_within_x_stops( node_1, node_2, number_stops )
+			if routes_in_this_range != []:
+				all_routes.append( routes_in_this_range )
+
+		if all_routes == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return str( len( return_list ) )
+			return str( len( all_routes ) )
 		
 	elif exact_stops_parse:
 		# 7. The number of trips starting at A and ending at C with exactly 4 stops.  
@@ -80,18 +77,12 @@ def execute_command( command, graph ):
 		if node_1 == node_2:
 			num_stops = num_stops + 1
 
-		if all_routes == None:
-			return lib.config.NO_ROUTE_TO_USER_STRING
+		all_routes = graph.return_routes_within_x_stops( node_1, node_2, num_stops )
 
-		return_list = []
-		for route in all_routes:
-			if len( route ) == num_stops:
-				return_list.append( route ) 
-		
-		if return_list == []:
+		if all_routes == []:
 			return lib.config.NO_ROUTE_TO_USER_STRING
 		else:
-			return str( len( return_list ) )
+			return str( len( all_routes ) )
 
 	elif route_length_parse:
 		# 5. The distance of the route A-E-D

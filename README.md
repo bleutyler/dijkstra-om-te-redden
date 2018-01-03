@@ -53,7 +53,11 @@ TEST:
 
 On the command line: 
 
-python -m unittest -v  test/Test*
+	python -m unittest -v  test/Test*
+
+To test the example given in the original requirements:
+
+	python analyseren.py test/in/provided_sample_graph.in test/in/commands.1.in 
 
 
 VERSION HISTORY:
@@ -92,6 +96,3 @@ dijkstra-om-te-redden 			Dijkstra-to-the-rescue
 								https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 							
 
-TO DO:
-had to redo input re-reading requiremnets.  SMALL adjustments to be made to analyseren
-clean up repo _pycache_ needs to go
