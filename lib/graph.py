@@ -130,6 +130,17 @@ class graph:
 				del dict[ other_node ][ node ]
 		return graph( dict )
 
+	def __str__( self ):
+		return_string = ''
+		for first_level in self.edges_dictionary.keys():
+			if return_string == '':
+				return_string = return_string + str( self.edges_dictionary[ first_level ] )
+			else:
+				return_string = return_string + ", " + str( self.edges_dictionary[ first_level ] )
+		
+		return return_string
+
+
 	def graph_please( self ):
 		return copy.deepcopy( self.edges_dictionary )
 
